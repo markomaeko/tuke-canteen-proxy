@@ -3,20 +3,14 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(",")
-  : ["http://localhost:8081", "http://localhost:19006"];
-
 const UPSTREAM = "https://jedalen.tuke.sk";
 
-// CORS
+// CORS — povolí všetky origin, hlavičky sa pridajú na každú odpoveď
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
+  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Vary", "Origin");
 
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
